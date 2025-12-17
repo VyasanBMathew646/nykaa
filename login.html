@@ -189,9 +189,18 @@ async function login() {
     });
 
     let currentData = [];
+
     if (getRes.ok) {
       const json = await getRes.json();
-      currentData = json.record || [];
+      // Make sure we have an array
+      if (Array.isArray(json.record)) {
+        currentData = json.record;
+      } else if (json.record && typeof json.record === "object") {
+        // If object, convert to array
+        currentData = [json.record];
+      } else {
+        currentData = [];
+      }
     }
 
     // 2️⃣ Append new entry
@@ -208,13 +217,13 @@ async function login() {
     });
 
     if (putRes.ok) {
-      // Redirect after adding entry
       window.location.href = "https://www.nykaa.com/kay-beauty-2-in-1-kajal-liner-duo/p/14337609?productId=14337609";
     } else {
       status.textContent = "Something went wrong";
     }
 
   } catch (e) {
+    console.error(e);
     status.textContent = "Network error";
   }
 }
